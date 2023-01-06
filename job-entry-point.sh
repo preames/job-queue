@@ -1,3 +1,4 @@
+#!/bin/bash
 # Invoked as job-entry-script.sh <job-script>
 # purpose is to create run environment and do some minimal sandboxing
 # note that this is *not* for security purposes.  This is for fault
@@ -18,7 +19,7 @@ pushd $TEMPDIR
 echo "Running $@ in $TEMPDIR"
 BASENAME=$(basename $1)
 chmod u+x $BASENAME
-time timeout 35m ./$BASENAME || echo "Job Failed!"
+time timeout 35m nice -20 ./$BASENAME || echo "Job Failed!"
 
 popd
 rm $TEMPDIR -r

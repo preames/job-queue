@@ -1,3 +1,4 @@
+#!/bin/bash
 # This entry point is triggered by cron roughly every 10 minutes
 # It's goal is to launch jobs from ~/job-queue/idle/ if system
 # load is idle.  Jobs are expected to be relatively short running,
@@ -8,7 +9,7 @@ set -x
 
 # Threshold for pause between actions.  In production should be > 30 seconds
 # but for local testing smaller values can be helpful.  
-SLEEP_PERIOD=5
+SLEEP_PERIOD=60
 # Threshold for load average which is considered idle enough for launching
 # background work.  Should generally be set to ~1/2 of number of processors
 THRESHOLD=$(bc <<< "$(nproc)/2")
