@@ -9,7 +9,7 @@ set -x
 
 # Threshold for pause between actions.  In production should be > 30 seconds
 # but for local testing smaller values can be helpful.  
-SLEEP_PERIOD=60
+SLEEP_PERIOD=30
 # Threshold for load average which is considered idle enough for launching
 # background work.  Should generally be set to ~1/2 of number of processors
 THRESHOLD=$(bc <<< "$(nproc)/2")
@@ -21,6 +21,7 @@ if [ $(bc <<< "$LOAD <= $THRESHOLD") -ne 1 ]; then
 fi
 
 mkdir -p ~/job-queue/queues/idle
+mkdir -p ~/job-queue/logs/
 
 # Launch at most 10 jobs to avoid runaway cases
 for i in {1..10}
@@ -33,9 +34,9 @@ do
     fi
 
     # Launch the job in the background
-    # FIXME: need a log mechanism
     echo "Launching $OLDEST_JOB"
-    ~/job-queue/job-entry-point.sh $OLDEST_JOB &
+    BASENAME=$(basename $OLDEST_JOB)
+    ~/job-queue/job-entry-point.sh $OLDEST_JOB &> ~/job-queue/logs/$BASENAME.log  &
 
     # Sleep for a bit to give the job time to launch and to ensure
     # that if the job immediately crashes that we don't crash bomb
